@@ -24,7 +24,7 @@ public abstract class Weapon extends GameObject {
 		SetStartPosition(x, y);
 		
 		// Set velocity
-		SetVelocity(100,100);
+		SetVelocity(0,100);
 		
 		// Initialise Gameplay Properties
 		InitialiseCollision();
@@ -33,6 +33,7 @@ public abstract class Weapon extends GameObject {
 		isAlive = false;
 	}
 	
+	// TODO: Implement weapon tracking
 	/**
 	 * Function to set if the weapon will track a target
 	 */
@@ -48,28 +49,30 @@ public abstract class Weapon extends GameObject {
 		return isTracking;
 	}
 	
-	// TODO
 	/**
 	 * Function to make the weapon track a target
 	 * @param dt - game time
 	 */
 	public void FollowTarget(double dt) {
 		ArrayList<GameObject> objArray = myEngine.level.levelObjects;
-		//GameObject player = new Ship(myEngine);
-		double targetX = 0;
+		double relativeX = 0;
 		
 		// Search the objects array for Ship classes
 		for(GameObject obj : objArray) {
 			if(obj instanceof Ship) {
 				// Get the center of the Ship object
-				targetX = obj.GetCollisionBox().getCenterX();
+				relativeX = obj.GetCollisionBox().getCenterX();
 			}
 		}
 		
 		// Weapon travels faster
-		myPosition.y -= (myVelocity.y + 80) * dt;
+		myPosition.y -= (myVelocity.y + 100) * dt;
 		// Weapon tracks the target x coordinate
-		if(myPosition.x < targetX) { myPosition.x += (myVelocity.y) * dt; }
-		if(myPosition.x > targetX) { myPosition.x -= (myVelocity.y) * dt; }
+		if(myPosition.x < relativeX) {
+			myPosition.x += (myVelocity.y) * dt;
+		}
+		if(myPosition.x > relativeX) {
+			myPosition.x -= (myVelocity.y) * dt;
+		}
 	}
 }

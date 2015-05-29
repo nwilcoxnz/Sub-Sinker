@@ -29,9 +29,6 @@ public class Explosion extends GameObject {
 		// Make sure it is displayed and not deleted
 		InitialiseCollision();
 		isAlive = true;
-		
-		// Play an explosion sound if the user has enabled sounds
-		if (myEngine.soundOn){ myEngine.playSoundFile("Gun.wav", -20); }
 	}
 	
 	public Explosion(MainGame e, double xPos, double yPos, double size) {

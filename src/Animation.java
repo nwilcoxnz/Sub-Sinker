@@ -1,8 +1,4 @@
 import java.awt.*;
-import java.awt.geom.*;
-import javax.swing.*;
-import java.awt.event.*;
-import java.util.*;
 
 public class Animation {
 	private GameEngine myEngine;
@@ -32,7 +28,9 @@ public class Animation {
 		}
 	}
 		
-	// This function allows animation to be separate from the framerate
+	/**
+	 * This function allows animations to be played independently from the framerate
+	 */
 	private int DetermineAnimationFrame(double timer, double duration, int numFrames) {
 		// Get frame
 		int i = (int)Math.floor(((myTimer % myDuration) / myDuration) * numFrames);
@@ -78,5 +76,4 @@ public class Animation {
 	public boolean GetPlayState(){
 		return isPlaying;
 	}
-
 }

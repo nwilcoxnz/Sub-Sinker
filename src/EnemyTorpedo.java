@@ -10,7 +10,6 @@ public class EnemyTorpedo extends Weapon {
 		
 		// Load image
 		myCurrentImage = e.loadImage(MainGame.imageDir + torpedoImg);
-		
 	}
 	
 	@Override

@@ -11,8 +11,7 @@ public class GameLevel {
 	
 	// Level Properties
 	private int enemyCount;
-	public int currentLevel;
-	public int maxLevel;
+	private int maxLevel;
 	private double weaponCooldown = 0;
 	public double levelTimer;
 	
@@ -27,7 +26,6 @@ public class GameLevel {
 		isCurrent = true;
 		isBossLevel = false;
 		levelObjects = new ArrayList<GameObject>();
-		currentLevel = 1;
 		maxLevel = 1;
 		levelTimer = 0;
 	}
@@ -61,35 +59,20 @@ public class GameLevel {
 		// Add the background object
 		levelObjects.add(0, new Background(gameParent));
 		
+		// TODO: Add conditional statement for the timer
 		// Add the submarines based on difficulty
 		for(int i=0; i < difficulty; i++){
 			levelObjects.add(new Submarine(gameParent));
 		}
 		
-		// Create special submarines at a certain point in the game
-		if(currentLevel > (maxLevel*.6)) {
-			GameObject miniBoss;
-			for(int i = 0; i < 2; i++) {
-				miniBoss = new SubmarineBoss(gameParent, 1.5, 25);
-				((SubmarineBoss)miniBoss).ChangeAnimatedImage("SharkSub.png", "MiddleBossSubs.png", 1, 14, new Vector2D(4, 4));
-				((SubmarineBoss)miniBoss).SetWeaponCount(2);
-				levelObjects.add(miniBoss);
-			}
-			
-		}
-		
 		// Add a boss submarine if the level is set as a boss level
 		if(isBossLevel) {
-			GameObject bossSub = new SubmarineBoss(gameParent, 1.9, 50, 600);
-			((SubmarineBoss)bossSub).SetWeaponCount(4);
-			((SubmarineBoss)bossSub).subType = SubmarineBoss.BossType.Tracker;
+			// TODO: Convert boss sub to a new class?
+			GameObject bossSub = new Submarine(gameParent, 2, 40, 600);
+			((Submarine)bossSub).weaponLimit = 3;
+			((Submarine)bossSub).SetBoss();
 			levelObjects.add(bossSub);
 		}
-		
-		// Level up display
-		if (currentLevel > 1){ 
-			levelObjects.add(new LevelUpFish(gameParent)); 
-			gameParent.playSoundFile("Bubbles.wav");}
 	}
 	
 	/**
@@ -117,11 +100,7 @@ public class GameLevel {
 			focus.UpdateObject(dt);
 			
 			//Removes object if no longer alive
-			if(!focus.isAlive){
-				if(focus instanceof Submarine) { MainGame.score++; }
-				if(focus instanceof SubmarineBoss) { MainGame.score += 2; }
-				levelObjects.remove(focus);
-			}
+			if(!focus.isAlive){ levelObjects.remove(focus); }
 			
 			// Comparison with other game objects
 			for(int j = 0; j < levelObjects.size(); j++) {
@@ -132,7 +111,7 @@ public class GameLevel {
 					// Collision checking
 					if(focus.CollideWith(target.GetCollisionBox())) {
 						if(focus instanceof Ship && target instanceof EnemyTorpedo) { focus.HitDetect(); target.HitDetect(); }
-						if(focus instanceof Submarine && target instanceof FriendlyTorpedo) { focus.HitDetect(); target.HitDetect(); }
+						if(focus instanceof Submarine && target instanceof FriendlyTorpedo) { focus.HitDetect(); target.HitDetect(); MainGame.score++; }
 						if(focus instanceof FriendlyTorpedo && target instanceof EnemyTorpedo) { focus.HitDetect(); target.HitDetect(); }
 					}
 					
@@ -141,10 +120,7 @@ public class GameLevel {
 						double centerSub = focus.GetCollisionBox().getCenterX();
 						if(centerSub > target.GetCollisionBox().getMinX() && centerSub < target.GetCollisionBox().getMaxX()) {
 							for(int w = 0; w < ((Submarine)focus).weaponLimit; w++) {
-								if(weaponCooldown > 0.2) {
-									((Submarine)focus).FireMine();
-									weaponCooldown = 0;
-								}
+								if(weaponCooldown > 0.2) { ((Submarine)focus).FireMine(); weaponCooldown = 0; }
 							}
 						}
 					}
@@ -175,6 +151,14 @@ public class GameLevel {
 	 */
 	public int GetEnemyCount() {
 		return enemyCount;
+	}
+	
+	/**
+	 * Function to get the max level
+	 * @return total number of levels
+	 */
+	public int GetMaxLevel() {
+		return maxLevel;
 	}
 	
 	/**

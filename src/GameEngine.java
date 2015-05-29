@@ -10,7 +10,7 @@ import java.io.*;
 import javax.imageio.*;
 import javax.sound.sampled.*;
 
-public abstract class GameEngine implements KeyListener, MouseListener, MouseMotionListener {
+public abstract class GameEngine implements KeyListener, MouseListener {
 	//-------------------------------------------------------
 	// Members of the GameEngine
 	//-------------------------------------------------------
@@ -107,25 +107,6 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
         }
     }
 
-    //This function plays a sound file on loop
-    //Takes the name of the sound file
-    public Clip playSoundFileLoop(String file_name) {
-        Clip clip = null;
-        try {
-            File clipFile = new File(file_name);
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(clipFile);
-            clip = AudioSystem.getClip();
-            clip.open(audioIn);
-
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-            clip.start();
-
-        } catch(Exception e) {
-            //clip.close();
-        }
-        return clip;
-    }
-
     //This function plays a sound file
     //Takes the name of the sound file and a volume in Decibels
     public Clip playSoundFileLoop(String file_name, float volume) {
@@ -180,11 +161,9 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(panel);
 		frame.setVisible(true);
-		frame.setResizable(false);
 
 		panel.setDoubleBuffered(true);
 		panel.addMouseListener(this);
-		panel.addMouseMotionListener(this);
 
         // register a key event dispatcher to get a turn in handling all
         // key events, independent of which component currently has the focus
@@ -209,21 +188,16 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
                     }
                 });
 
-		// Resize the window (insets are just the boarders that the Operating System puts on the board)
+		// Resize the window (insets are just the boards that the Operating System puts on the board)
 		Insets insets = frame.getInsets();
 		frame.setSize(width + insets.left + insets.right, height + insets.top + insets.bottom);
 	}
 
-	public void setWindowSize(final int width, final int height) {
-		SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-				// Resize the window (insets are just the boarders that the Operating System puts on the board)
-				Insets insets = frame.getInsets();
-				frame.setSize(width + insets.left + insets.right, height + insets.top + insets.bottom);
-				panel.setSize(width, height);
-			}
-		});
+	public void setWindowSize(int width, int height) {
+		// Resize the window (insets are just the boards that the Operating System puts on the board)
+		Insets insets = frame.getInsets();
+		frame.setSize(width + insets.left + insets.right, height + insets.top + insets.bottom);
+		panel.setSize(width, height);
 	}
 
 	//-------------------------------------------------------
@@ -237,7 +211,7 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
             public void run()
             {
                 // Create the window	
-                setupWindow(1024, 768);
+                setupWindow(500,500);
             }
         });
 	}
@@ -378,16 +352,6 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
     public void mouseExited(MouseEvent e) {
         
     }
-
-    // Called whenever the mouse is moved
-	public void mouseMoved(MouseEvent e) {
-
-	}
-
-	// Called whenever the mouse is moved with the mouse button held down
-	public void mouseDragged(MouseEvent e) {
-
-	}
 
 	//-------------------------------------------------------
 	// Useful Functions for Drawing things on the screen
@@ -550,5 +514,4 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
 	void shear(double x, double y) {
 		graphics.shear(x, y);
 	}
-
 }

@@ -29,13 +29,7 @@ public abstract class GameObject implements Collidable{
 		myEngine.rotate(myAngle);
 		
 		// Draw the object image
-		if(flip == true) {
-			myEngine.drawImage(FlipAnyImage(myCurrentImage), 0, 0, myDimensions.x, myDimensions.y);
-		} else {
-			myEngine.drawImage(myCurrentImage, 0, 0, myDimensions.x, myDimensions.y);
-		}
-
-		//myEngine.drawImage(myCurrentImage, 0, 0, myDimensions.x, myDimensions.y);
+		myEngine.drawImage(myCurrentImage, 0, 0, myDimensions.x, myDimensions.y);
 		
 		// Restore last transform to undo the rotate and translate transforms
 		myEngine.restoreLastTransform();
@@ -192,14 +186,6 @@ public abstract class GameObject implements Collidable{
 		tx.translate(-myCurrentImage.getWidth(null), 0);
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 		myCurrentImage = op.filter((BufferedImage)myCurrentImage, null);
-	}
-
-	public Image FlipAnyImage(Image i) {
-		AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
-		tx.translate(-i.getWidth(null), 0);
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-		i = op.filter((BufferedImage) i, null);
-		return i;
 	}
 	
 	/**

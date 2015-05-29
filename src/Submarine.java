@@ -7,9 +7,9 @@ public class Submarine extends GameObject {
 	private String spriteImage = "SharkSubSprite.png";
 	
 	// Weapon Properties
-	protected ArrayList<Weapon> subTorpedo;
+	private ArrayList<Weapon> subTorpedo;
 	public int weaponLimit;
-	
+	private boolean isBoss;
 	/**
 	 * Default Constructor
 	 * @param setEngine - Game Engine class
@@ -68,7 +68,6 @@ public class Submarine extends GameObject {
 		myPosition.y = y;
 	}
 	
-	// TODO
 	/**
 	 * Function to initialise common submarine variables
 	 */
@@ -85,7 +84,7 @@ public class Submarine extends GameObject {
 		
 		// Position (x, y)
 		double randomX = GenerateRandom(0, MainGame.WINDOW_RES_X - myDimensions.x - 100);
-		double randomY = GenerateRandom(MainGame.WINDOW_RES_Y / 2, MainGame.WINDOW_RES_Y - myDimensions.y);
+		double randomY = GenerateRandom(MainGame.WINDOW_RES_Y / 3, MainGame.WINDOW_RES_Y - myDimensions.y);
 		SetStartPosition(randomX, randomY);
 		
 		// Velocity (vx, vy)
@@ -94,11 +93,16 @@ public class Submarine extends GameObject {
 		// Initialise object properties
 		InitialiseCollision();
 		SetHealth(1);
+		isBoss = false;
 		isAlive = true;
 		
 		// Initialise Weapon Properties
 		subTorpedo = new ArrayList<Weapon>();
-		SetWeaponCount(1);
+		weaponLimit = 1;
+		// Add the torpedoes
+		for(int i = 0; i < weaponLimit; i++) {
+			subTorpedo.add(new EnemyTorpedo(myEngine, GetCollisionBox().getCenterX(), myPosition.y));
+		}
 	}
 
 	@Override
@@ -119,27 +123,29 @@ public class Submarine extends GameObject {
 			myVelocity.x *= -1;
 		}
 		
+		// if(flip && myCurrentImage != null) { FlipImage(); }
+		
 		if(!isAlive) { myEngine.level.levelObjects.add(new Explosion(myEngine, myPosition.x - 20, myPosition.y, 2)); }
 		
 		myAnimation.Play();
 	}
 	
 	//----------- BEHAVIOUR METHODS -----------
-	// TODO
 	/**
-	 * Function that changes the current ammunition count
-	 * @param count - new ammo count
+	 * Function to set the submarine as a boss
 	 */
-	public void SetWeaponCount(int count) {
-		weaponLimit = count;
-		subTorpedo.clear();
-		// Add the torpedoes
-		for(int i = 0; i < weaponLimit; i++) {
-			subTorpedo.add(new EnemyTorpedo(myEngine, GetCollisionBox().getCenterX(), myPosition.y));
-		}
+	public void SetBoss() {
+		isBoss = true;
 	}
 	
-	// TODO
+	/**
+	 * Function to check if the submarine is a boss sub
+	 * @return 'true' for sub boss and 'false' if not
+	 */
+	public boolean IsSubBoss() {
+		return isBoss;
+	}
+	
 	/**
 	 * Creates a new Ammunition object in the position
 	 * of the Submarine
@@ -150,6 +156,7 @@ public class Submarine extends GameObject {
 		for(Weapon wp : subTorpedo) {
 			if(!tempArray.contains(wp) && !wp.isAlive) {
 				// Fires a new torpedo if there are none active
+				if(isBoss) { wp.SetTracking(); }
 				wp.ChangePosition(GetCollisionBox().getCenterX(), myPosition.y);
 				wp.isAlive = true;
 				tempArray.add(wp);
